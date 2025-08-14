@@ -2,9 +2,13 @@ namespace Realtime_Weather_Monitoring_and_Reporting_System.Weather_Data;
 
 public class WeatherData
 {
-    public string Location { get; }
-    public decimal Temperature { get; }
-    public decimal Humidity { get; }
+    required public string Location { get; set; }
+    public decimal Temperature { get; set; }
+    public decimal Humidity { get; set; }
+
+    public WeatherData()
+    {
+    }
 
     public WeatherData(string location, decimal temperature, decimal humidity)
     {
