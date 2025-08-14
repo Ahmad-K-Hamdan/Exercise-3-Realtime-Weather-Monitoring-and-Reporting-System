@@ -1,4 +1,5 @@
-﻿using Realtime_Weather_Monitoring_and_Reporting_System.Weather_Data;
+﻿using Realtime_Weather_Monitoring_and_Reporting_System.Bots;
+using Realtime_Weather_Monitoring_and_Reporting_System.Weather_Data;
 
 var inputJSON =
 """
@@ -22,13 +23,20 @@ var inputXML =
 IWeatherDataParser parser = new JSONParser();
 var data = parser.ParseData(inputJSON);
 
-Console.WriteLine(data.Temperature);
-Console.WriteLine(data.Location);
-Console.WriteLine(data.Humidity);
-
 parser = new XMLParser();
 data = parser.ParseData(inputXML);
 
-Console.WriteLine(data.Temperature);
-Console.WriteLine(data.Location);
-Console.WriteLine(data.Humidity);
+var botsConfiguration = new BotsConfiguration();
+botsConfiguration.LoadConfiguration("Bots/config.json");
+
+System.Console.WriteLine(botsConfiguration.RainBot.Enabled);
+System.Console.WriteLine(botsConfiguration.RainBot.HumidityThreshold);
+System.Console.WriteLine(botsConfiguration.RainBot.Message);
+System.Console.WriteLine();
+System.Console.WriteLine(botsConfiguration.SunBot.Enabled);
+System.Console.WriteLine(botsConfiguration.SunBot.TemperatureThreshold);
+System.Console.WriteLine(botsConfiguration.SunBot.Message);
+System.Console.WriteLine();
+System.Console.WriteLine(botsConfiguration.SnowBot.Enabled);
+System.Console.WriteLine(botsConfiguration.SnowBot.TemperatureThreshold);
+System.Console.WriteLine(botsConfiguration.SnowBot.Message);
