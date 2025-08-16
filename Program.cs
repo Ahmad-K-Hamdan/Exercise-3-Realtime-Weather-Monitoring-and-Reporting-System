@@ -12,13 +12,14 @@ public class Program
         botsConfiguration.LoadConfiguration("Bots/config.json");
 
         var parsers = new List<IWeatherDataParser> { new JSONParser(), new XMLParser() };
+        var parserPicker = new ParserPicker(parsers);
 
         while (true)
         {
             var input = ReadUserInput();
             if (input == null) break;
 
-            var parser = SelectParser(input!, parsers);
+            var parser = parserPicker.GetParser(input);
             if (parser == null)
             {
                 Console.WriteLine("\nInvalid Input. Supported formats: JSON, XML.");
@@ -58,6 +59,4 @@ public class Program
 
         return string.Join(Environment.NewLine, lines);
     }
-
-    static IWeatherDataParser? SelectParser(string input, List<IWeatherDataParser> parsers) => parsers.FirstOrDefault(parser => parser.CanParse(input));
 }
