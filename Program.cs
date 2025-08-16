@@ -1,42 +1,55 @@
 ﻿using Realtime_Weather_Monitoring_and_Reporting_System.Bots;
 using Realtime_Weather_Monitoring_and_Reporting_System.Weather_Data;
 
-var inputJSON =
-"""
-  {
-  "Location": "Ramallah",
-  "Temperature": 23.0,
-  "Humidity": 85.0 
-  }
-""";
+public class Program
+{
+    static void Main(string[] args)
+    {
+        Console.Clear();
+        Console.WriteLine("Welcome to the weather monitoring and reporting service");
+        Console.WriteLine("Enter weather data (q to quit):");
 
-var inputXML =
-"""
-<WeatherData>
-  <Location>City Name</Location>
-  <Temperature>23.0</Temperature>
-  <Humidity>85.0</Humidity>
-</WeatherData>
-""";
+        var botsConfiguration = new BotsConfiguration();
+        botsConfiguration.LoadConfiguration("Bots/config.json");
 
+        var parsers = new List<IWeatherDataParser> { new JSONParser(), new XMLParser() };
 
-IWeatherDataParser parser = new JSONParser();
-var data = parser.ParseData(inputJSON);
+        string input;
+        while (true)
+        {
+            List<string> lines = new List<string>();
+            string? line;
+            while (!string.IsNullOrEmpty(line = Console.ReadLine()) && line != "q")
+            {
+                lines.Add(line);
+            }
 
-parser = new XMLParser();
-data = parser.ParseData(inputXML);
+            if (line == "q") break;
+            input = string.Join(Environment.NewLine, lines);
 
-var botsConfiguration = new BotsConfiguration();
-botsConfiguration.LoadConfiguration("Bots/config.json");
+            var parser = parsers.FirstOrDefault(parser => parser.CanParse(input));
+            if (parser == null)
+            {
+                Console.WriteLine("\nInvalid Input. Parser not found.");
+                Console.WriteLine("Enter weather data (q to quit):");
+                continue;
+            }
 
-System.Console.WriteLine(botsConfiguration.RainBot.Enabled);
-System.Console.WriteLine(botsConfiguration.RainBot.HumidityThreshold);
-System.Console.WriteLine(botsConfiguration.RainBot.Message);
-System.Console.WriteLine();
-System.Console.WriteLine(botsConfiguration.SunBot.Enabled);
-System.Console.WriteLine(botsConfiguration.SunBot.TemperatureThreshold);
-System.Console.WriteLine(botsConfiguration.SunBot.Message);
-System.Console.WriteLine();
-System.Console.WriteLine(botsConfiguration.SnowBot.Enabled);
-System.Console.WriteLine(botsConfiguration.SnowBot.TemperatureThreshold);
-System.Console.WriteLine(botsConfiguration.SnowBot.Message);
+            WeatherData weatherData = null!;
+            try
+            {
+                weatherData = parser.ParseData(input);
+                Console.WriteLine("\nParsed successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+                continue;
+            }
+
+            Console.WriteLine("Enter weather data (q to quit):");
+        }
+
+        Console.WriteLine("Good Bye!");
+    }
+}

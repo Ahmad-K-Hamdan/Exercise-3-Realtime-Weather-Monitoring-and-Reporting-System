@@ -6,7 +6,19 @@ public class JSONParser : IWeatherDataParser
 {
     public WeatherData ParseData(string data)
     {
-        var weatherData = JsonSerializer.Deserialize<WeatherData>(data)!;
-        return weatherData;
+        try
+        {
+            var weatherData = JsonSerializer.Deserialize<WeatherData>(data)!;
+            return weatherData;
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new FormatException("Failed to parse JSON data", ex);
+        }
+    }
+
+    public bool CanParse(string input)
+    {
+        return input.Trim().StartsWith('{');
     }
 }
