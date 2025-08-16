@@ -18,7 +18,7 @@ public class SunBot : Bot
         if (Enabled && data.Temperature >= TemperatureThreshold)
         {
             Console.WriteLine("SunBot activated!");
-            Console.WriteLine($"SunBot: \"{Message}\"");
+            Console.WriteLine($"SunBot: \"{Message}\"\n");
         }
     }
 }

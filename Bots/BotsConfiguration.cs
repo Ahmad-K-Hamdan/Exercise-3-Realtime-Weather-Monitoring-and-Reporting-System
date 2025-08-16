@@ -7,6 +7,7 @@ public class BotsConfiguration
     public SunBot SunBot { get; set; } = null!;
     public RainBot RainBot { get; set; } = null!;
     public SnowBot SnowBot { get; set; } = null!;
+    public List<Bot> Bots { get; private set; } = new();
 
     public void LoadConfiguration(string filePath)
     {
@@ -17,5 +18,7 @@ public class BotsConfiguration
         SunBot = deserializedData.SunBot;
         RainBot = deserializedData.RainBot;
         SnowBot = deserializedData.SnowBot;
+
+        Bots = new List<Bot> { SunBot, RainBot, SnowBot };
     }
 }

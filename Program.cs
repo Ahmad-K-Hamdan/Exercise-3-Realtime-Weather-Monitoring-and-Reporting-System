@@ -1,4 +1,5 @@
 ﻿using Realtime_Weather_Monitoring_and_Reporting_System.Bots;
+using Realtime_Weather_Monitoring_and_Reporting_System.Observer;
 using Realtime_Weather_Monitoring_and_Reporting_System.Weather_Data;
 
 public class Program
@@ -10,6 +11,12 @@ public class Program
 
         var botsConfiguration = new BotsConfiguration();
         botsConfiguration.LoadConfiguration("Bots/config.json");
+
+        var weatherStation = new WeatherStation();
+        foreach (var bot in botsConfiguration.Bots)
+        {
+            weatherStation.Attach(bot);
+        }
 
         var parsers = new List<IWeatherDataParser> { new JSONParser(), new XMLParser() };
         var parserPicker = new ParserPicker(parsers);
@@ -29,7 +36,7 @@ public class Program
             try
             {
                 WeatherData weatherData = parser.ParseData(input!);
-                Console.WriteLine("\nParsed successfully!\n");
+                weatherStation.Activate(weatherData);
             }
             catch (Exception ex)
             {

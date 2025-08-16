@@ -15,10 +15,10 @@ public class SnowBot : Bot
 
     public override void Update(WeatherData data)
     {
-        if (Enabled && data.Temperature >= TemperatureThreshold)
+        if (Enabled && data.Temperature <= TemperatureThreshold)
         {
             Console.WriteLine("SnowBot activated!");
-            Console.WriteLine($"SnowBot: \"{Message}\"");
+            Console.WriteLine($"SnowBot: \"{Message}\"\n");
         }
     }
 }

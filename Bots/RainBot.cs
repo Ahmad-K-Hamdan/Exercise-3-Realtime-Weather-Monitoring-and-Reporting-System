@@ -18,7 +18,7 @@ public class RainBot : Bot
         if (Enabled && data.Humidity >= HumidityThreshold)
         {
             Console.WriteLine("RainBot activated!");
-            Console.WriteLine($"RainBot: \"{Message}\"");
+            Console.WriteLine($"RainBot: \"{Message}\"\n");
         }
     }
 }
