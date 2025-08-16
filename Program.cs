@@ -7,49 +7,57 @@ public class Program
     {
         Console.Clear();
         Console.WriteLine("Welcome to the weather monitoring and reporting service");
-        Console.WriteLine("Enter weather data (q to quit):");
 
         var botsConfiguration = new BotsConfiguration();
         botsConfiguration.LoadConfiguration("Bots/config.json");
 
         var parsers = new List<IWeatherDataParser> { new JSONParser(), new XMLParser() };
 
-        string input;
         while (true)
         {
-            List<string> lines = new List<string>();
-            string? line;
-            while (!string.IsNullOrEmpty(line = Console.ReadLine()) && line != "q")
-            {
-                lines.Add(line);
-            }
+            var input = ReadUserInput();
+            if (input == null) break;
 
-            if (line == "q") break;
-            input = string.Join(Environment.NewLine, lines);
-
-            var parser = parsers.FirstOrDefault(parser => parser.CanParse(input));
+            var parser = SelectParser(input!, parsers);
             if (parser == null)
             {
-                Console.WriteLine("\nInvalid Input. Parser not found.");
-                Console.WriteLine("Enter weather data (q to quit):");
+                Console.WriteLine("\nInvalid Input. Supported formats: JSON, XML.");
                 continue;
             }
 
-            WeatherData weatherData = null!;
             try
             {
-                weatherData = parser.ParseData(input);
-                Console.WriteLine("\nParsed successfully!");
+                WeatherData weatherData = parser.ParseData(input!);
+                Console.WriteLine("\nParsed successfully!\n");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"\nError: {ex.Message}");
-                continue;
             }
-
-            Console.WriteLine("Enter weather data (q to quit):");
         }
 
         Console.WriteLine("Good Bye!");
     }
+
+    static string? ReadUserInput()
+    {
+        Console.WriteLine("Enter weather data (q to quit):");
+
+        List<string> lines = new List<string>();
+        string? line;
+
+        while (!string.IsNullOrEmpty(line = Console.ReadLine()) && line != "q")
+        {
+            lines.Add(line);
+        }
+
+        if (line == "q")
+        {
+            return null;
+        }
+
+        return string.Join(Environment.NewLine, lines);
+    }
+
+    static IWeatherDataParser? SelectParser(string input, List<IWeatherDataParser> parsers) => parsers.FirstOrDefault(parser => parser.CanParse(input));
 }
